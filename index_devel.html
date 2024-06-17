@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link List App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .frosted-glass {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            transition: opacity 0.3s;
+        }
+
+        .edit-button, #edit-title-button {
+            opacity: 0;
+        }
+
+        .icon-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .edit-button:hover {
+            opacity: 1;
+        }
+        #edit-title-button:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen" style="background-image: url('_MG_2561.png'); background-size: cover;">
+    <div class="frosted-glass p-8 rounded shadow-md w-full max-w-md">
+        <div id="title-container" class="flex justify-center items-center mb-6">
+            <h1 id="title" class="text-2xl font-bold">My Links</h1>
+            <button id="edit-title-button" class="icon-button ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                </svg>
+            </button>
+        </div>
+        <ul id="link-list" class="space-y-4">
+            <!-- Links will be inserted here by JavaScript -->
+        </ul>
+    </div>
+
+    <script>
+        const links = [
+            { name: 'Google', url: 'https://www.google.com', editMode: false },
+            { name: 'Facebook', url: 'https://www.facebook.com', editMode: false },
+            { name: 'Twitter', url: 'https://www.twitter.com', editMode: false },
+            { name: 'GitHub', url: 'https://www.github.com', editMode: false },
+            { name: 'Stack Overflow', url: 'https://stackoverflow.com', editMode: false }
+        ];
+
+        const linkList = document.getElementById('link-list');
+        const titleContainer = document.getElementById('title-container');
+        const titleElement = document.getElementById('title');
+        const editTitleButton = document.getElementById('edit-title-button');
+
+        let isTitleEditMode = false;
+
+function renderLinks() {
+    linkList.innerHTML = ''; // Clear existing content before rendering
+    links.forEach((link, index) => {
+        const listItem = document.createElement('li');
+        listItem.className = 'flex items-center space-x-4 justify-center';
+
+        const linkName = document.createElement('a');
+        linkName.href = link.url;
+        linkName.textContent = link.name;
+
+        const linkNameInput = document.createElement('input');
+        linkNameInput.type = 'text';
+        linkNameInput.value = link.name;
+        linkNameInput.className = 'border p-1 rounded w-full hidden';
+        linkNameInput.placeholder = 'Link Name';
+
+        const linkUrlInput = document.createElement('input');
+        linkUrlInput.type = 'text';
+        linkUrlInput.value = link.url;
+        linkUrlInput.className = 'border p-1 rounded w-full hidden';
+        linkUrlInput.placeholder = 'Enter URL..';
+
+        if (link.editMode) {
+            linkName.classList.add('hidden');
+            linkNameInput.classList.remove('hidden');
+            linkUrlInput.classList.remove('hidden');
+        } else {
+            linkName.classList.remove('hidden');
+            linkNameInput.classList.add('hidden');
+            linkUrlInput.classList.add('hidden');
+        }
+
+        const editButton = document.createElement('button');
+        editButton.className = 'icon-button edit-button';
+        editButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+            </svg>
+        `;
+
+        const saveButton = document.createElement('button');
+        saveButton.className = 'icon-button save-button'; // Save button is always shown
+        saveButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+            <path d="M11 2H9v3h2z"/>
+            <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+        </svg>
+        `;
+        saveButton.style.display = link.editMode ? 'block' : 'none'; // Show save button when in edit mode
+
+        editButton.addEventListener('click', () => {
+            if (link.editMode) {
+                // Save changes
+                link.name = listItem.querySelector('input[type="text"]').value;
+                link.url = listItem.querySelectorAll('input[type="text"]')[1].value;
+                link.editMode = false;
+                renderLinks(); // Re-render the links after editing
+            } else {
+                // Edit mode
+                link.editMode = true;
+                renderLinks(); // Re-render the links after entering edit mode
+            }
+        });
+
+        saveButton.addEventListener('click', () => {
+            link.name = listItem.querySelector('input[type="text"]').value;
+            link.url = listItem.querySelectorAll('input[type="text"]')[1].value;
+            link.editMode = false;
+            renderLinks(); // Re-render the links after saving
+        });
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'icon-button ml-2 hidden';
+        deleteButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+            </svg>
+        `;
+
+        deleteButton.addEventListener('click', () => {
+            links.splice(index, 1);
+            renderLinks(); // Re-render the links after deleting
+        });
+
+        if (link.editMode) {
+            deleteButton.classList.remove('hidden');
+            editButton.style.display = 'none'; // Hide edit button when in edit mode
+        }
+
+        listItem.appendChild(linkName);
+        listItem.appendChild(linkNameInput);
+        listItem.appendChild(linkUrlInput);
+        listItem.appendChild(editButton);
+        listItem.appendChild(saveButton); // Appending save button here
+        listItem.appendChild(deleteButton);
+
+        linkList.appendChild(listItem); // Append the list item to the link list
+    });
+}
+
+
+
+        editTitleButton.addEventListener('click', () => {
+            if (isTitleEditMode) {
+                titleElement.textContent = titleContainer.querySelector('input[type="text"]').value;
+                isTitleEditMode = false;
+            } else {
+                const titleInput = document.createElement('input');
+                titleInput.type = 'text';
+                titleInput.value = titleElement.textContent;
+                titleInput.className = 'border p-1 rounded w-full';
+                titleContainer.insertBefore(titleInput, titleElement);
+                titleElement.remove();
+                isTitleEditMode = true;
+            }
+            renderTitle();
+        });
+
+        function renderTitle() {
+            if (isTitleEditMode) {
+                editTitleButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
+                    <path d="M11 2H9v3h2z"/>
+                    <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+                </svg>
+                `;
+            } else {
+                editTitleButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                </svg>
+                `;
+            }
+        }
+
+        renderLinks();
+        renderTitle();
+    </script>
+</body>
+</html>

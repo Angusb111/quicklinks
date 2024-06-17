@@ -1,0 +1,7 @@
+[
+    { "name": "Google", "url": "https://www.google.com", "editMode": false },
+    { "name": "Facebook", "url": "https://www.facebook.com", "editMode": false },
+    { "name": "Twitter", "url": "https://www.twitter.com", "editMode": false },
+    { "name": "GitHub", "url": "https://www.github.com", "editMode": false },
+    { "name": "Stack Overflow", "url": "https://stackoverflow.com", "editMode": false }
+]

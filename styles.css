@@ -1,0 +1,32 @@
+body {
+    background-image: url('_MG_2561.png'); 
+    background-size: cover;
+}
+.frosted-glass {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    transition: opacity 0.3s;
+}
+
+.edit-button, #edit-title-button {
+    opacity: 0;
+}
+
+.icon-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.edit-button:hover {
+    opacity: 1;
+}
+#edit-title-button:hover {
+    opacity: 1;
+}
