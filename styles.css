@@ -4,7 +4,7 @@ body {
 }
 .frosted-glass {
     backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.26);
 }
 
 .links-col {
@@ -13,5 +13,68 @@ body {
     align-items: center;
     justify-content: evenly;
     gap: 8px;
+    padding: 20px 0;
 }
 
+.link-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.modify-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.link-a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    transition: all 0.33s;
+    padding: 4px 16px 4px 8px;
+    border-radius: 8px;
+    border: 1px solid darkgrey;
+}
+
+.link-a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.modify-links-button {
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.33s;
+}
+
+.modify-links-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.favicon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+/*
+
+div{
+    border: 1px solid magenta;
+}
+
+button {
+    border: 1px solid aqua;
+}
+
+a {
+    border: 1px solid yellow;
+}
