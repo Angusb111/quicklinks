@@ -13,7 +13,7 @@ async function getFavicon(url) {
         return faviconUrl;
     } catch (error) {
         console.error('Error fetching favicon:', error);
-        return '';
+        return ''; // Return an empty string if fetching fails
     }
 }
 
@@ -26,12 +26,13 @@ function displayLinks() {
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
         </svg>`;
+    const defaultSvgDataUri = `data:image/svg+xml;base64,${btoa(defaultSvg)}`;
 
     links.forEach((link, index) => {
         const linkHTML = `
         <div class="link-row" id="link-${index}">
             <a class="link-a" href="${link.url}" target="_blank">
-                <img src="data:image/svg+xml;base64,${btoa(defaultSvg)}" alt="Favicon" class="favicon" id="favicon-${index}">
+                <img src="${defaultSvgDataUri}" alt="Favicon" class="favicon" id="favicon-${index}">
                 ${link.name}
             </a>
             <button class="link-remove-button" data-index="${index}">
@@ -67,30 +68,21 @@ function displayLinks() {
     });
 }
 
+
 function addLink() {
     const urlInput = document.getElementById('linkURL');
-    let url = urlInput.value.trim();
+    const url = urlInput.value.trim();
     const nameInput = document.getElementById('linkName');
     const name = nameInput.value;
 
     if (url && name) {
-        if (!url.startsWith('https://') && !url.startsWith('http://')) {
-            if (!url.includes('www.')) {
-                url = 'https://www.' + url;
-            } else {
-                url = 'https://' + url;
-            }
-        } else if (!url.includes('www.')) {
-            const parts = url.split('://');
-            url = parts[0] + '://www.' + parts[1];
-        }
-
         const links = JSON.parse(localStorage.getItem('links')) || [];
         links.push({ url: url, name: name });
         localStorage.setItem('links', JSON.stringify(links));
         displayLinks();
     }
 }
+
 
 function loadForm() {
     const linksContainer = document.getElementById('linksContainer');
