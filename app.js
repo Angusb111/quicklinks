@@ -18,8 +18,9 @@ async function getFavicon(url) {
 }
 
 function displayLinks() {
-    const links = JSON.parse(localStorage.getItem('links')) || [];
+    const main_array = JSON.parse(localStorage.getItem('linksArray')) || [];
     const linksContainer = document.getElementById('linksContainer');
+    const tabsContainer = document.getElementById('tabs');
     linksContainer.innerHTML = '';
 
     const defaultSvg = `
@@ -28,44 +29,57 @@ function displayLinks() {
         </svg>`;
     const defaultSvgDataUri = `data:image/svg+xml;base64,${btoa(defaultSvg)}`;
 
-    links.forEach((link, index) => {
-        const linkHTML = `
-        <div class="link-row" id="link-${index}">
-            <a class="link-a" href="${link.url}" target="_blank">
-                <img src="${defaultSvgDataUri}" alt="Favicon" class="favicon" id="favicon-${index}">
-                ${link.name}
-            </a>
-            <button class="link-remove-button" data-index="${index}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
+    main_array.forEach((category, index) => {
+
+        tabButtonHTML = `
+            <button class="tab-button" data="${category.name}">
+            ${category.name}
             </button>
-        </div>
         `;
-        linksContainer.innerHTML += linkHTML;
-    });
 
-    links.forEach(async (link, index) => {
-        const favicon = await getFavicon(link.url);
-        if (favicon) {
-            document.getElementById(`favicon-${index}`).src = favicon;
-        }
-    });
+        tabsContainer.innerHTML += tabButtonHTML;
 
-    const removeButtons = document.querySelectorAll('.link-remove-button');
-    removeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const indexToRemove = this.getAttribute('data-index');
-            if (indexToRemove !== null) {
-                const links = JSON.parse(localStorage.getItem('links')) || [];
-                links.splice(indexToRemove, 1);
-                localStorage.setItem('links', JSON.stringify(links));
-                displayLinks();
-                const editButton = document.getElementById('editLinks');
-                editButton.classList.remove('edit-mode');
+        category.links.forEach((link, index) => {
+            const linkHTML = `
+            <div class="link-row" id="link-${index}">
+                <a class="link-a" href="${link.url}" target="_blank">
+                    <img src="${defaultSvgDataUri}" alt="Favicon" class="favicon" id="favicon-${index}">
+                    ${link.name}
+                </a>
+                <button class="link-remove-button" data-index="${index}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </button>
+            </div>
+            `;
+            linksContainer.innerHTML += linkHTML;
+        });
+    
+        category.links.forEach(async (link, index) => {
+            const favicon = await getFavicon(link.url);
+            if (favicon) {
+                document.getElementById(`favicon-${index}`).src = favicon;
             }
         });
+    
+        const removeButtons = document.querySelectorAll('.link-remove-button');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const indexToRemove = this.getAttribute('data-index');
+                if (indexToRemove !== null) {
+                    const links = JSON.parse(localStorage.getItem('links')) || [];
+                    links.splice(indexToRemove, 1);
+                    localStorage.setItem('links', JSON.stringify(links));
+                    displayLinks();
+                    const editButton = document.getElementById('editLinks');
+                    editButton.classList.remove('edit-mode');
+                }
+            });
+        });
     });
+
+    
 }
 
 
