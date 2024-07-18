@@ -8,6 +8,7 @@ body {
     background-size: cover;
     background-position: bottom;
     font-family: outfit;
+    margin: 0px;
 }
 
 .bg-gray {
@@ -17,7 +18,7 @@ body {
 .flex-center {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: end;
 }
 
 .min-h-screen {
@@ -32,6 +33,7 @@ body {
 .title {
     font-size: 2rem;
     font-weight: bold;
+    margin: 0;
 }
 
 .frosted-glass {
@@ -162,7 +164,24 @@ body {
 
 #box {
     margin: 40px;
-    padding: 2rem;
+}
+
+.tab {
+    padding-top: 1rem;
+}
+
+.tab > div {
+    height: fit-content;
+    margin: 0px;
+    padding: 1em 0;
+}
+
+#boxWrapper {
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
 }
 
 .tabs-row {
@@ -175,10 +194,18 @@ body {
     display: flex;
     align-content: center;
     backdrop-filter: saturate(180%) blur(16px);
-    background-color: rgba(255, 255, 255, 0.26);
+    background-color: rgba(150, 150, 150, 0.26);
     border-radius: 0.375rem 0.375rem 0 0 ;
     border: none;
     padding: 10px;
     z-index: 2;
     font-family: outfit;
+}
+
+.tab-button:hover {
+    background-color: rgba(200, 200, 200, 0.26);
+}
+
+.tab-button.active {
+    background-color: rgba(255, 255, 255, 0.26);
 }

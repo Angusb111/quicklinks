@@ -17,8 +17,32 @@ async function getFavicon(url) {
     }
 }
 
+function setupTabListeners() {
+    const tabsContainer = document.getElementById('tabs');
+    const tabButtons = tabsContainer.querySelectorAll('.tab-button');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabName = this.getAttribute('data');
+            tabButtons.forEach(btn => {
+                hideBtnData = btn.getAttribute('data');
+                targetTabHide = document.querySelector(`[tabid="${hideBtnData}"]`);
+                targetTabHide.style.display = 'none';
+                btn.classList.remove('active');
+            });
+
+            this.classList.add('active');
+            const targetTab = document.querySelector(`[tabid="${tabName}"]`);
+            targetTab.style.display = 'block';
+
+        });
+    });
+}
+
 function displayLinks() {
     const main_array = JSON.parse(localStorage.getItem('linksArray')) || [];
+    const tabsBox = document.getElementById('box');
+
     const linksContainer = document.getElementById('linksContainer');
     const tabsContainer = document.getElementById('tabs');
     linksContainer.innerHTML = '';
@@ -38,6 +62,7 @@ function displayLinks() {
         `;
 
         tabsContainer.innerHTML += tabButtonHTML;
+        setupTabListeners();
 
         category.links.forEach((link, index) => {
             const linkHTML = `
@@ -78,9 +103,8 @@ function displayLinks() {
             });
         });
     });
-
-    
 }
+
 
 
 function addLink() {
@@ -140,3 +164,4 @@ document.addEventListener('DOMContentLoaded', displayLinks);
 
 const newLinkButton = document.getElementById('newLink');
 newLinkButton.addEventListener('click', loadForm);
+
