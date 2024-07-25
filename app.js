@@ -84,8 +84,6 @@ function loadTabs() {
         tabContents.innerHTML += tabContentHTML;
         
         displayCategoryLinks(category.name);
-
-        console.log(category.name + '} tab set up');
     });
 
     setupTabListeners();
@@ -98,7 +96,7 @@ function loadTabs() {
 function toggleEditMode(buttonId) {
     const removeButtons = document.querySelectorAll('.link-remove-button');
     const editButton = document.querySelector(`.modify-links-button.edit-links-button[data-tab="${buttonId}"]`);
-
+    activeEditButton = buttonId;
     if (editMode) {
         removeButtons.forEach(button => {
             button.style.display = 'none';
@@ -134,7 +132,6 @@ function removeCategory(categoryName) {
     loadTabs();
 }
 
-
 async function displayCategoryLinks(categoryName) {
     const main_array = JSON.parse(localStorage.getItem('linksArray')) || [];
     const category = main_array.find(cat => cat.name === categoryName);
@@ -163,16 +160,20 @@ async function displayCategoryLinks(categoryName) {
             </div>
         `;
         linksContainer.innerHTML += linkHTML;
-
-        document.getElementById(`favicon-${index}-${categoryName}`).src = `https://www.google.com/s2/favicons?sz=64&domain_url=${link.url}`;
-
+        
+        if (link.icon == "") {
+            iconSrc = `https://www.google.com/s2/favicons?sz=64&domain_url=${link.url}`;
+        } else {
+            iconSrc = `https://www.google.com/s2/favicons?sz=64&domain_url=${link.icon}`;
+        }
+        
+        document.getElementById(`favicon-${index}-${categoryName}`).src = iconSrc;
     });
 
     setupRemoveListeners();
 }
 
 function loadForm(categoryName, button) {
-
     let formContainer = document.getElementById('form-container');
 
     if (formContainer) {
@@ -184,11 +185,11 @@ function loadForm(categoryName, button) {
             <div id="form-container">
                 <input type="text" id="linkName" placeholder="Link Name">
                 <input type="text" id="linkURL" placeholder="Link URL">
+                <input type="text" id="iconURL" placeholder="Icon URL (optional)">
                 <button id="linkSubmit">Add Link</button>
             </div>
         `;
         const linksContainer = document.getElementById(`linksContainer-${categoryName}`);
-        console.log(`helloworld`);
         linksContainer.innerHTML += formHTML;
 
         const linkSubmitButton = document.getElementById('linkSubmit');
@@ -199,21 +200,22 @@ function loadForm(categoryName, button) {
 function addLink() {
     const linkNameInput = document.getElementById('linkName');
     const linkURLInput = document.getElementById('linkURL');
+    const iconURLInput = document.getElementById('iconURL');
     const linkName = linkNameInput.value.trim();
     const linkURL = linkURLInput.value.trim();
+    const iconURL = iconURLInput.value.trim();
 
     if (linkName && linkURL) {
         const mainArray = JSON.parse(localStorage.getItem('linksArray')) || [];
         const activeTab = document.querySelector('.tab-button.active').getAttribute('data');
         const category = mainArray.find(cat => cat.name === activeTab);
 
-        category.links.push({ name: linkName, url: linkURL });
+        category.links.push({ name: linkName, url: linkURL, icon: iconURL });
         localStorage.setItem('linksArray', JSON.stringify(mainArray));
         displayCategoryLinks(category.name);
+        activeAddButton.children[1].innerHTML = '';
     }
 }
-
-
 
 function showNewTabForm() {
     const formHTML = `
@@ -254,6 +256,7 @@ function setupRemoveListeners() {
             categoryObj.links.splice(index, 1);
 
             localStorage.setItem('linksArray', JSON.stringify(mainArray));
+            toggleEditMode(activeEditButton)
             displayCategoryLinks(category);
         });
     });
@@ -276,7 +279,9 @@ function setupAddListeners() {
     addButtons.forEach(button => {
         button.addEventListener('click', function() {
             const buttonId = button.getAttribute('data-tab');
+            activeAddButton = button;
             loadForm(buttonId, button);
+
         });
     });
 }
